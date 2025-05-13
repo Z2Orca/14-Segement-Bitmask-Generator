@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta charset="UTF-8">
   <title>14-Segment Bitmask Generator</title>
   <style>
@@ -71,6 +72,9 @@
     <strong>Bitmask (hex):</strong> <span id="bitmaskHex"></span>
   </div>
   <script>
+    if (!segments || segments.length === 0) {
+  console.error("No segments found in the DOM.");
+}
     const segmentCount = 14;
     let bitmask = 0;
     const segments = document.querySelectorAll('.segment');
