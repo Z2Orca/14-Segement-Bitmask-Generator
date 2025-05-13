@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta charset="UTF-8">
   <title>14-Segment Bitmask Generator</title>
   <style>
@@ -172,9 +171,6 @@ function updateSnippet1() {
   document.getElementById('snip1').innerText = code;
 }
 // --------- MULTI GENERATOR PAGE ---------
-if (!segments || segments.length === 0) {
-    <div class="display-container" id="multiDisplays"></div>
-  console.error("No segments found in the DOM.");
 const multiDisplaysDiv = document.getElementById('multiDisplays');
 let selectedMulti = [[],[],[],[]]; // 4 arrays for 4 displays
 function setupMultiDisplays() {
@@ -271,3 +267,4 @@ aboutBtn.onclick = () => {
 </script>
 </body>
 </html>
+
