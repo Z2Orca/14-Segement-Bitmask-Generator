@@ -5,92 +5,269 @@
   <meta charset="UTF-8">
   <title>14-Segment Bitmask Generator</title>
   <style>
-    body { font-family: Arial, sans-serif; background: #181818; color: #eee; }
-    #display {
-      position: relative;
-      width: 200px;
-      height: 220px;
-      margin: 30px auto;
-      background: #222;
-      border-radius: 16px;
-      box-shadow: 0 4px 24px #000a;
+    body { background: #181a20; min-height: 100vh; display: flex; flex-direction: column; align-items: center; color: #eee; font-family: sans-serif; }
+    .menu-bar { margin-top: 24px; margin-bottom: 12px; width: 100vw; display: flex; justify-content: center; }
+    .menu-bar button { background: #23272f; color: #fff; border: none; border-radius: 4px 4px 0 0; padding: 10px 28px; font-size: 1.1rem; cursor: pointer; margin-right: 2px; margin-left: 2px; transition: background 0.2s; }
+    .menu-bar button.active { background: #ff1744; color: #fff; font-weight: bold; }
+    .display-container { display: flex; gap: 32px; margin: 32px 0 16px 0; justify-content: center; }
+    svg { display: block; }
+    .segment { fill: #23272f; stroke: #444a58; stroke-width: 4; cursor: pointer; transition: fill 0.2s, filter 0.2s; filter: drop-shadow(0 0 4px #0008); }
+    .segment.active { fill: #ff1744; filter: drop-shadow(0 0 16px #ff1744cc); stroke: #ff5252; }
+    .dot { fill: #23272f; stroke: #444a58; stroke-width: 4; cursor: pointer; transition: fill 0.2s, filter 0.2s; filter: drop-shadow(0 0 4px #0008); }
+    .dot.active { fill: #ff1744; filter: drop-shadow(0 0 16px #ff1744cc); stroke: #ff5252; }
+    .snip { background: #23272f; color: #fff; padding: 16px; border-radius: 8px; font-family: monospace; margin-top: 24px; min-width: 400px; max-width: 90vw; white-space: pre; font-size: 1rem; }
+    .generator-controls { display: flex; gap: 12px; margin-top: 10px; margin-bottom: 24px; justify-content: center; }
+    .instructions { margin-top: 16px; color: #aaa; font-size: 1.05em; text-align: center; }
+    #aboutPage { background: #23272f; border-radius: 10px; padding: 32px 28px; margin-top: 40px; max-width: 600px; box-shadow: 0 2px 24px #0008; }
+    #aboutPage h2 { color: #ff1744; margin-top: 0; }
+    #aboutPage code, #aboutPage pre { color: #fff59d; background: #181a20; padding: 2px 4px; border-radius: 4px; }
+    @media (max-width: 1100px) {
+      .display-container { flex-direction: column; align-items: center; gap: 12px; }
+      .snip { min-width: 0; }
+      #aboutPage { padding: 18px 4vw; }
     }
-    .segment {
-      position: absolute;
-      background: #444;
-      cursor: pointer;
-      border-radius: 8px;
-      opacity: 0.3;
-      transition: background 0.2s, opacity 0.2s;
-      box-shadow: 0 2px 8px #0008;
-    }
-    .segment.on {
-      background: #ffe600;
-      opacity: 1;
-      box-shadow: 0 0 12px #ffe60099, 0 2px 8px #0008;
-    }
-    /* Horizontal Segments */
-    .a  { left: 38px;  top: 12px;  width: 120px; height: 18px; }
-    .g1 { left: 38px;  top: 101px; width: 55px;  height: 18px; }
-    .g2 { left: 103px; top: 101px; width: 55px;  height: 18px; }
-    .d  { left: 38px;  top: 192px; width: 120px; height: 18px; }
-    /* Vertical Segments */
-    .f  { left: 23px;  top: 32px;  width: 18px;  height: 70px; }
-    .b  { left: 153px; top: 32px;  width: 18px;  height: 70px; }
-    .e  { left: 23px;  top: 120px; width: 18px;  height: 70px; }
-    .c  { left: 153px; top: 120px; width: 18px;  height: 70px; }
-    /* Diagonal Segments (rotated) */
-    .h  { left: 58px;  top: 32px;  width: 18px;  height: 70px; transform: rotate(-26deg);}
-    .i  { left: 116px; top: 32px;  width: 18px;  height: 70px; transform: rotate(26deg);}
-    .j  { left: 58px;  top: 120px; width: 18px;  height: 70px; transform: rotate(26deg);}
-    .k  { left: 116px; top: 120px; width: 18px;  height: 70px; transform: rotate(-26deg);}
-    /* Center verticals */
-    .l  { left: 87px;  top: 32px;  width: 18px;  height: 70px; }
-    .m  { left: 87px;  top: 120px; width: 18px;  height: 70px; }
   </style>
 </head>
 <body>
-  <h2 style="text-align:center;">14-Segment Bitmask Generator</h2>
-  <div id="display">
-    <div class="segment a"  data-bit="0" title="A"></div>
-    <div class="segment b"  data-bit="1" title="B"></div>
-    <div class="segment c"  data-bit="2" title="C"></div>
-    <div class="segment d"  data-bit="3" title="D"></div>
-    <div class="segment e"  data-bit="4" title="E"></div>
-    <div class="segment f"  data-bit="5" title="F"></div>
-    <div class="segment g1" data-bit="6" title="G1"></div>
-    <div class="segment g2" data-bit="7" title="G2"></div>
-    <div class="segment h"  data-bit="8" title="H"></div>
-    <div class="segment i"  data-bit="9" title="I"></div>
-    <div class="segment j"  data-bit="10" title="J"></div>
-    <div class="segment k"  data-bit="11" title="K"></div>
-    <div class="segment l"  data-bit="12" title="L"></div>
-    <div class="segment m"  data-bit="13" title="M"></div>
+  <div class="menu-bar">
+    <button id="aboutPageBtn">How To</button>
+    <button id="singlePageBtn" class="active">Single Generator</button>
+    <button id="multiPageBtn">4 Generators</button>
   </div>
-  <div style="text-align:center;margin-top:20px;">
-    <strong>Bitmask (bin):</strong> <span id="bitmaskBin"></span><br>
-    <strong>Bitmask (hex):</strong> <span id="bitmaskHex"></span>
+  <div class="instructions" id="instructions">
+    Click segments to build a single animation frame.<br>
+    Copy the bitmask for your code.
   </div>
-  <script>
-    if (!segments || segments.length === 0) {
-  console.error("No segments found in the DOM.");
+  <div id="pageSingle">
+    <div class="display-container" id="singleDisplay"></div>
+    <div class="generator-controls">
+      <button id="resetBtn1">Reset Frame</button>
+      <button id="copyBtn1">Copy Bitmask</button>
+    </div>
+    <pre id="snip1" class="snip">// Click segments to generate bitmask here</pre>
+  </div>
+  <div id="pageMulti" style="display:none;">
+    <div class="display-container" id="multiDisplays"></div>
+    <div class="generator-controls">
+      <button id="resetBtn2">Reset All</button>
+      <button id="copyBtn2">Copy All Bitmasks</button>
+    </div>
+    <pre id="snip2" class="snip">// Click segments to generate bitmasks here</pre>
+  </div>
+  <div id="aboutPage" style="display:none;">
+    <h2>How To: Creating Animations with Bitmasks</h2>
+    <p>
+      This tool lets you visually select segments on a 14-segment display and generate a bitmask for each frame.
+    </p>
+    <ol>
+      <li>Click segments to turn them on/off for a frame.</li>
+      <li>Copy the generated bitmask (e.g. <code>0b0000000000000001;</code>).</li>
+      <li>Repeat for each animation frame you want.</li>
+      <li>Paste the bitmasks into an array in your Arduino or C++ code:</li>
+    </ol>
+<pre>
+const uint16_t frames[] = {
+  0b0000000000000001, // Frame 1
+  0b0000000000000010, // Frame 2
+  0b0000000000000100  // Frame 3
+};
+const uint8_t numFrames = sizeof(frames) / sizeof(frames[0]);
+</pre>
+    <ol start="5">
+      <li>Use a loop to display each frame in sequence for your animation:</li>
+    </ol>
+<pre>
+for (uint8_t i = 0; i &lt; numFrames; i++) {
+  display.writeDigitRaw(0, frames[i]); // 0 = digit position
+  display.writeDisplay();
+  delay(120); // ms between frames
 }
-    const segmentCount = 14;
-    let bitmask = 0;
-    const segments = document.querySelectorAll('.segment');
-    function updateBitmaskDisplay() {
-      document.getElementById('bitmaskBin').textContent = '0b' + bitmask.toString(2).padStart(segmentCount, '0');
-      document.getElementById('bitmaskHex').textContent = '0x' + bitmask.toString(16).toUpperCase().padStart(4, '0');
-    }
-    segments.forEach(seg => {
-      seg.addEventListener('click', function() {
-        const bit = parseInt(this.dataset.bit, 10);
-        bitmask ^= (1 << bit);
-        this.classList.toggle('on');
-        updateBitmaskDisplay();
-      });
+</pre>
+    <p>
+      <b>
+        Tip:</b> You can use the "4 Generators" page to create frames for multiple digits at once.<br>
+    </p>
+  </div>
+<script>
+// Segment order and bitmasks (matches Adafruit 14-segment mapping)
+const SEGMENTS = [
+  {id: 'a',  mask: 0b0000000000000001},
+  {id: 'b',  mask: 0b0000000000000010},
+  {id: 'c',  mask: 0b0000000000000100},
+  {id: 'd',  mask: 0b0000000000001000},
+  {id: 'e',  mask: 0b0000000000010000},
+  {id: 'f',  mask: 0b0000000000100000},
+  {id: 'g1', mask: 0b0000000001000000},
+  {id: 'g2', mask: 0b0000000010000000},
+  {id: 'h',  mask: 0b0000000100000000},
+  {id: 'i',  mask: 0b0000001000000000},
+  {id: 'j',  mask: 0b0000010000000000},
+  {id: 'k',  mask: 0b0000100000000000},
+  {id: 'l',  mask: 0b0001000000000000},
+  {id: 'm',  mask: 0b0010000000000000},
+  {id: 'dp', mask: 0b0100000000000000}
+];
+function getDisplaySVG(prefix) {
+  return `
+    <svg width="220" height="340" viewBox="0 0 220 340">
+      <rect id="${prefix}a" class="segment" x="50" y="18" width="120" height="14" rx="7"/>
+      <rect id="${prefix}d" class="segment" x="50" y="308" width="120" height="14" rx="7"/>
+      <rect id="${prefix}g1" class="segment" x="50" y="161" width="54" height="14" rx="7"/>
+      <rect id="${prefix}g2" class="segment" x="116" y="161" width="54" height="14" rx="7"/>
+      <rect id="${prefix}f" class="segment" x="36" y="36" width="14" height="112" rx="7"/>
+      <rect id="${prefix}e" class="segment" x="36" y="192" width="14" height="112" rx="7"/>
+      <rect id="${prefix}b" class="segment" x="170" y="36" width="14" height="112" rx="7"/>
+      <rect id="${prefix}c" class="segment" x="170" y="192" width="14" height="112" rx="7"/>
+      <polygon id="${prefix}h" class="segment" points="56,36 68,36 108,155 96,155"/>
+      <polygon id="${prefix}i" class="segment" points="164,36 152,36 112,155 124,155"/>
+      <polygon id="${prefix}k" class="segment" points="56,306 68,306 108,185 96,185"/>
+      <polygon id="${prefix}m" class="segment" points="164,306 152,306 112,185 124,185"/>
+      <rect id="${prefix}j" class="segment" x="102" y="40" width="16" height="120" rx="8"/>
+      <rect id="${prefix}l" class="segment" x="102" y="180" width="16" height="120" rx="8"/>
+      <circle id="${prefix}dp" class="dot" cx="200" cy="325" r="12"/>
+    </svg>
+  `;
+}
+// --------- SINGLE GENERATOR PAGE ---------
+const singleDisplayDiv = document.getElementById('singleDisplay');
+singleDisplayDiv.innerHTML = getDisplaySVG('s1_');
+let selected1 = [];
+SEGMENTS.forEach(seg => {
+  const el = document.getElementById(`s1_${seg.id}`);
+  if (el) {
+    el.addEventListener('click', () => {
+      const idx = selected1.indexOf(seg.id);
+      if (idx === -1) {
+        selected1.push(seg.id);
+        el.classList.add('active');
+      } else {
+        selected1.splice(idx, 1);
+        el.classList.remove('active');
+      }
+      updateSnippet1();
     });
-    updateBitmaskDisplay();
-  </script>
+  }
+});
+document.getElementById('resetBtn1').onclick = () => {
+  selected1 = [];
+  document.querySelectorAll('#singleDisplay .active').forEach(el => el.classList.remove('active'));
+  updateSnippet1();
+};
+document.getElementById('copyBtn1').onclick = () => {
+  const snip = document.getElementById('snip1').innerText;
+  const lines = snip.split('\n').filter(line => line.trim().startsWith('0b'));
+  navigator.clipboard.writeText(lines.join('\n'));
+};
+function updateSnippet1() {
+  if (selected1.length === 0) {
+    document.getElementById('snip1').innerText = '// Click segments to generate bitmask here';
+    return;
+  }
+  let mask = 0;
+  selected1.forEach(id => {
+    const seg = SEGMENTS.find(seg => seg.id === id);
+    mask |= seg.mask;
+  });
+  let code = `// Animation frame bitmask\n0b${mask.toString(2).padStart(16,'0')};`;
+  document.getElementById('snip1').innerText = code;
+}
+// --------- MULTI GENERATOR PAGE ---------
+if (!segments || segments.length === 0) {
+    <div class="display-container" id="multiDisplays"></div>
+  console.error("No segments found in the DOM.");
+const multiDisplaysDiv = document.getElementById('multiDisplays');
+let selectedMulti = [[],[],[],[]]; // 4 arrays for 4 displays
+function setupMultiDisplays() {
+  multiDisplaysDiv.innerHTML = '';
+  selectedMulti = [[],[],[],[]];
+  for (let i = 1; i <= 4; i++) {
+    const div = document.createElement('div');
+    div.innerHTML = getDisplaySVG('m'+i+'_');
+    multiDisplaysDiv.appendChild(div.firstChild);
+  }
+  for (let i = 1; i <= 4; i++) {
+    SEGMENTS.forEach(seg => {
+      const el = document.getElementById(`m${i}_${seg.id}`);
+      if (el) {
+        el.addEventListener('click', () => {
+          const idx = selectedMulti[i-1].indexOf(seg.id);
+          if (idx === -1) {
+            selectedMulti[i-1].push(seg.id);
+            el.classList.add('active');
+          } else {
+            selectedMulti[i-1].splice(idx, 1);
+            el.classList.remove('active');
+          }
+          updateSnippet2();
+        });
+      }
+    });
+  }
+  updateSnippet2();
+}
+document.getElementById('resetBtn2').onclick = () => {
+  selectedMulti = [[],[],[],[]];
+  document.querySelectorAll('#multiDisplays .active').forEach(el => el.classList.remove('active'));
+  updateSnippet2();
+};
+document.getElementById('copyBtn2').onclick = () => {
+  const snip = document.getElementById('snip2').innerText;
+  const lines = snip.split('\n').filter(line => line.trim().startsWith('0b'));
+  navigator.clipboard.writeText(lines.join('\n'));
+};
+function updateSnippet2() {
+  let code = '';
+  let any = false;
+  for (let i = 0; i < 4; i++) {
+    if (selectedMulti[i].length === 0) continue;
+    any = true;
+    let mask = 0;
+    selectedMulti[i].forEach(id => {
+      const seg = SEGMENTS.find(seg => seg.id === id);
+      mask |= seg.mask;
+    });
+    code += `// Display ${i+1} frame bitmask\n0b${mask.toString(2).padStart(16,'0')};\n`;
+  }
+  document.getElementById('snip2').innerText = any ? code.trim() : '// Click segments to generate bitmasks here';
+}
+// --------- PAGE SWITCHING ---------
+const pageSingle = document.getElementById('pageSingle');
+const pageMulti = document.getElementById('pageMulti');
+const aboutPage = document.getElementById('aboutPage');
+const singleBtn = document.getElementById('singlePageBtn');
+const multiBtn = document.getElementById('multiPageBtn');
+const aboutBtn = document.getElementById('aboutPageBtn');
+const instr = document.getElementById('instructions');
+singleBtn.onclick = () => {
+  pageSingle.style.display = '';
+  pageMulti.style.display = 'none';
+  aboutPage.style.display = 'none';
+  singleBtn.classList.add('active');
+  multiBtn.classList.remove('active');
+  aboutBtn.classList.remove('active');
+  instr.innerHTML = `Click segments to build a single animation frame.<br>
+    Copy the bitmask for your code.`;
+};
+multiBtn.onclick = () => {
+  pageSingle.style.display = 'none';
+  pageMulti.style.display = '';
+  aboutPage.style.display = 'none';
+  singleBtn.classList.remove('active');
+  multiBtn.classList.add('active');
+  aboutBtn.classList.remove('active');
+  instr.innerHTML = `Click segments on any display to build a frame for each.<br>
+    Copy all bitmasks for your code.`;
+  setupMultiDisplays();
+};
+aboutBtn.onclick = () => {
+  pageSingle.style.display = 'none';
+  pageMulti.style.display = 'none';
+  aboutPage.style.display = '';
+  singleBtn.classList.remove('active');
+  multiBtn.classList.remove('active');
+  aboutBtn.classList.add('active');
+  instr.innerHTML = '';
+};
+</script>
 </body>
 </html>
