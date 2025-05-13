@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>14-Segment Bitmask Generator</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #181818; color: #eee; }
+    #display {
+      position: relative;
+      width: 200px;
+      height: 220px;
+      margin: 30px auto;
+      background: #222;
+      border-radius: 16px;
+      box-shadow: 0 4px 24px #000a;
+    }
+    .segment {
+      position: absolute;
+      background: #444;
+      cursor: pointer;
+      border-radius: 8px;
+      opacity: 0.3;
+      transition: background 0.2s, opacity 0.2s;
+      box-shadow: 0 2px 8px #0008;
+    }
+    .segment.on {
+      background: #ffe600;
+      opacity: 1;
+      box-shadow: 0 0 12px #ffe60099, 0 2px 8px #0008;
+    }
+    /* Horizontal Segments */
+    .a  { left: 38px;  top: 12px;  width: 120px; height: 18px; }
+    .g1 { left: 38px;  top: 101px; width: 55px;  height: 18px; }
+    .g2 { left: 103px; top: 101px; width: 55px;  height: 18px; }
+    .d  { left: 38px;  top: 192px; width: 120px; height: 18px; }
+    /* Vertical Segments */
+    .f  { left: 23px;  top: 32px;  width: 18px;  height: 70px; }
+    .b  { left: 153px; top: 32px;  width: 18px;  height: 70px; }
+    .e  { left: 23px;  top: 120px; width: 18px;  height: 70px; }
+    .c  { left: 153px; top: 120px; width: 18px;  height: 70px; }
+    /* Diagonal Segments (rotated) */
+    .h  { left: 58px;  top: 32px;  width: 18px;  height: 70px; transform: rotate(-26deg);}
+    .i  { left: 116px; top: 32px;  width: 18px;  height: 70px; transform: rotate(26deg);}
+    .j  { left: 58px;  top: 120px; width: 18px;  height: 70px; transform: rotate(26deg);}
+    .k  { left: 116px; top: 120px; width: 18px;  height: 70px; transform: rotate(-26deg);}
+    /* Center verticals */
+    .l  { left: 87px;  top: 32px;  width: 18px;  height: 70px; }
+    .m  { left: 87px;  top: 120px; width: 18px;  height: 70px; }
+  </style>
+</head>
+<body>
+  <h2 style="text-align:center;">14-Segment Bitmask Generator</h2>
+  <div id="display">
+    <div class="segment a"  data-bit="0" title="A"></div>
+    <div class="segment b"  data-bit="1" title="B"></div>
+    <div class="segment c"  data-bit="2" title="C"></div>
+    <div class="segment d"  data-bit="3" title="D"></div>
+    <div class="segment e"  data-bit="4" title="E"></div>
+    <div class="segment f"  data-bit="5" title="F"></div>
+    <div class="segment g1" data-bit="6" title="G1"></div>
+    <div class="segment g2" data-bit="7" title="G2"></div>
+    <div class="segment h"  data-bit="8" title="H"></div>
+    <div class="segment i"  data-bit="9" title="I"></div>
+    <div class="segment j"  data-bit="10" title="J"></div>
+    <div class="segment k"  data-bit="11" title="K"></div>
+    <div class="segment l"  data-bit="12" title="L"></div>
+    <div class="segment m"  data-bit="13" title="M"></div>
+  </div>
+  <div style="text-align:center;margin-top:20px;">
+    <strong>Bitmask (bin):</strong> <span id="bitmaskBin"></span><br>
+    <strong>Bitmask (hex):</strong> <span id="bitmaskHex"></span>
+  </div>
+  <script>
+    const segmentCount = 14;
+    let bitmask = 0;
+    const segments = document.querySelectorAll('.segment');
+    function updateBitmaskDisplay() {
+      document.getElementById('bitmaskBin').textContent = '0b' + bitmask.toString(2).padStart(segmentCount, '0');
+      document.getElementById('bitmaskHex').textContent = '0x' + bitmask.toString(16).toUpperCase().padStart(4, '0');
+    }
+    segments.forEach(seg => {
+      seg.addEventListener('click', function() {
+        const bit = parseInt(this.dataset.bit, 10);
+        bitmask ^= (1 << bit);
+        this.classList.toggle('on');
+        updateBitmaskDisplay();
+      });
+    });
+    updateBitmaskDisplay();
+  </script>
+</body>
+</html>
