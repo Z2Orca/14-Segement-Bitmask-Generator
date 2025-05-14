@@ -220,7 +220,7 @@ function updateSnippet2() {
       const seg = SEGMENTS.find(seg => seg.id === id);
       mask |= seg.mask;
     });
-    code += `// Display ${i+1} frame bitmask\n0b${mask.toString(2).padStart(16,'0')};\n`;
+    code += `// Display ${i+1} frame bitmask\n0b${mask.toString(2).padStart(16,'0')},\n`;
   }
   document.getElementById('snip2').innerText = any ? code.trim() : '// Click segments to generate bitmasks here';
 }
