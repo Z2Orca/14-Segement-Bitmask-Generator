@@ -165,7 +165,7 @@ function updateSnippet1() {
     const seg = SEGMENTS.find(seg => seg.id === id);
     mask |= seg.mask;
   });
-  let code = `// Animation frame bitmask\n0b${mask.toString(2).padStart(16,'0')};`;
+  let code = `// Animation frame bitmask\n0b${mask.toString(2).padStart(16,'0')},`;
   document.getElementById('snip1').innerText = code;
 }
 // --------- MULTI GENERATOR PAGE ---------
